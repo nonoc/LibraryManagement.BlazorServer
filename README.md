@@ -18,7 +18,7 @@ Clean Architecture principles
 
 Prerequisites
 
-.NET 7 SDK
+.NET 8 SDK
 
 Visual Studio 2022 / VS Code
 
