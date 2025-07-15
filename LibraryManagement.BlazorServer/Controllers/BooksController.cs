@@ -10,6 +10,11 @@ namespace LibraryManagement.BlazorServer.Controllers
     {
 
         private readonly IBookService _bookService;
+
+        /// <summary>
+        /// Point 4 Write a small example of how you would use Dependency Injection to inject the IBookService into a hypothetical BooksController. 
+        /// </summary>
+        /// <param name="bookService"></param>
         public BooksController(IBookService bookService)
         {
             _bookService = bookService;

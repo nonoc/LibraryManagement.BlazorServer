@@ -1,0 +1,54 @@
+﻿@page "/books/create"
+
+
+@using LibraryManagement.BlazorServer.Models
+@inject LibraryManagement.BlazorServer.Services.IBookService BookService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create Book</PageTitle>
+
+<h3>Create a New Book</h3>
+
+<EditForm Model="newBook" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label class="form-label">Title</label>
+        <InputText class="form-control" @bind-Value="newBook.Title" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Author</label>
+        <InputText class="form-control" @bind-Value="newBook.Author" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Published Date</label>
+        <InputDate class="form-control" @bind-Value="newBook.PublishedDate" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Genre</label>
+        <InputText class="form-control" @bind-Value="newBook.Genre" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Price</label>
+        <InputNumber class="form-control" @bind-Value="newBook.Price" step="0.01" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+    <button type="button" class="btn btn-secondary ms-2" @onclick="OnClick">Cancel</button>
+</EditForm>
+
+@code {
+    private Book newBook = new Book { PublishedDate = DateTime.Today };
+
+    private void OnClick()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    private void HandleValidSubmit()
+    {
+        BookService.AddBookAsync(newBook);
+        NavigationManager.NavigateTo("/");
+    }
+}

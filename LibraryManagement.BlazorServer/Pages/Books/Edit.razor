@@ -1,0 +1,70 @@
+﻿@page "/books/edit/{BookId:int}"
+
+
+@using LibraryManagement.BlazorServer.Models
+@inject LibraryManagement.BlazorServer.Services.IBookService BookService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit Book</PageTitle>
+
+<h3>Edit Book</h3>
+
+@if (book == null)
+{
+    <p><em>Loading…</em></p>
+}
+else
+{
+    <EditForm Model="book" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <InputText class="form-control" @bind-Value="book.Title" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Author</label>
+            <InputText class="form-control" @bind-Value="book.Author" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Published Date</label>
+            <InputDate class="form-control" @bind-Value="book.PublishedDate" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Genre</label>
+            <InputText class="form-control" @bind-Value="book.Genre" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Price</label>
+            <InputNumber class="form-control" @bind-Value="book.Price" step="0.01" />
+        </div>
+
+        <button type="submit" class="btn btn-success">Save</button>
+        <button type="button" class="btn btn-secondary ms-2" @onclick="() => OnClick()">Cancel</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public int BookId { get; set; }
+    private Book? book;
+
+      private void OnClick()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    protected override async void OnInitialized()
+    {
+        book = await BookService.GetBookByIdAsync(BookId);
+    }
+
+    private async void HandleValidSubmit()
+    {
+        if (book is not null)
+        {
+            await BookService.UpdateBookAsync(book);
+            NavigationManager.NavigateTo("/");
+        }
+    }
+}

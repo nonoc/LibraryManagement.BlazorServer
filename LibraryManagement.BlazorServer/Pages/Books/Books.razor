@@ -1,17 +1,17 @@
-﻿@page "/"
+﻿@page "/books"
 
 @using LibraryManagement.BlazorServer.Models
-@inject LibraryManagement.BlazorServer.Services.IBookService BookService
+@using LibraryManagement.BlazorServer.Services
+@inject IBookService BookService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 
-<PageTitle>Library Management</PageTitle>
+<PageTitle>Books</PageTitle>
 
-<h1>Welcome to your Library</h1>
-<p>Here’s a list of all books in the system:</p>
+<h3>All Books</h3>
 
-<table class="table table-hover">
-    <thead class="table-primary">
+<table class="table table-striped table-hover">
+    <thead class="table-light">
         <tr>
             <th>Title</th>
             <th>Author</th>
@@ -24,15 +24,11 @@
     <tbody>
         @if (books == null)
         {
-            <tr>
-                <td colspan="6">Loading...</td>
-            </tr>
+            <tr><td colspan="6">Loading…</td></tr>
         }
         else if (!books.Any())
         {
-            <tr>
-                <td colspan="6">No books available.</td>
-            </tr>
+            <tr><td colspan="6">No books found.</td></tr>
         }
         else
         {
@@ -46,11 +42,11 @@
                     <td class="text-end">@book.Price.ToString("C")</td>
                     <td class="text-nowrap">
                         <button class="btn btn-sm btn-outline-primary me-1"
-                                @onclick="() => EditBook(book.BookId)">
+                                @onclick="() => OnEditAsync(book.BookId)">
                             Edit
                         </button>
                         <button class="btn btn-sm btn-outline-danger"
-                                @onclick="() => DeleteBookAsync(book.BookId)">
+                                @onclick="() => OnDeleteAsync(book.BookId)">
                             Delete
                         </button>
                     </td>
@@ -66,24 +62,31 @@
     // 1) Use OnInitializedAsync so Blazor awaits it
     protected override async Task OnInitializedAsync()
     {
+        await LoadBooksAsync();
+    }
+
+    // 2) LoadBooks returns a Task
+    private async Task LoadBooksAsync()
+    {
         books = await BookService.GetBooksAsync();
     }
 
-    private void EditBook(int id)
-        => NavigationManager.NavigateTo($"/books/edit/{id}");
-
-    // 2) Make this return Task and await everything
-    private async Task DeleteBookAsync(int id)
+    // 3) Edit returns Task (even if synchronous)
+    private Task OnEditAsync(int bookId)
     {
-        // await the confirm dialog instead of .Result
+        NavigationManager.NavigateTo($"/books/edit/{bookId}");
+        return Task.CompletedTask;
+    }
+
+    // 4) Delete returns Task, awaits confirm + delete + reload
+    private async Task OnDeleteAsync(int bookId)
+    {
         bool confirmed = await JSRuntime.InvokeAsync<bool>(
-            "confirm", $"Delete book #{id}?");
+            "confirm", $"Delete book #{bookId}?");
         if (!confirmed)
             return;
 
-        await BookService.DeleteBookAsync(id);
-
-        // reload and re-render
-        books = await BookService.GetBooksAsync();
+        await BookService.DeleteBookAsync(bookId);
+        await LoadBooksAsync();
     }
 }

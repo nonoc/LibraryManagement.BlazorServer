@@ -1,19 +1,39 @@
 ﻿@inherits LayoutComponentBase
 
-<PageTitle>LibraryManagement.BlazorServer</PageTitle>
+<PageTitle>Library Management</PageTitle>
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-2 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="position-sticky pt-3">
+                <h5 class="px-3">Library</h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
+                            <span class="oi oi-home"></span> Home
+                        </NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="/books">
+                            <span class="oi oi-book"></span> Books
+                        </NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="/books/create">
+                            <span class="oi oi-plus"></span> Add Book
+                        </NavLink>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4">        
+
+            <article class="content">
+                @Body
+            </article>
+        </main>
     </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
 </div>
